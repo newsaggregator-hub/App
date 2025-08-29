@@ -1,4 +1,7 @@
 {
+  "version": 2,
+  "buildCommand": "echo 'Static site - no build needed'",
+  "outputDirectory": ".",
   "functions": {
     "api/signup.js": {
       "maxDuration": 10
