@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsLens - Compare Perspectives on the Same Story</title>
+    <meta name="description" content="Get multiple perspectives on the same news story from different sources. Stay informed with balanced news coverage.">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>NewsLens</h1>
+            </div>
+            <nav class="nav">
+                <a href="#features">Features</a>
+                <a href="#signup">Early Access</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Compare Perspectives on the Same Story</h1>
+                <p class="hero-subtitle">
+                    Break free from echo chambers. Get balanced news coverage by comparing how different sources report the same events. 
+                    Make informed decisions with multiple perspectives at your fingertips.
+                </p>
+                <div class="hero-cta">
+                    <a href="#signup" class="btn btn-primary">Get Early Access</a>
+                    <a href="#features" class="btn btn-secondary">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="news-preview">
+                    <div class="news-card preview">
+                        <div class="source">BBC News</div>
+                        <div class="headline">Global Markets React to Economic Policy Changes</div>
+                    </div>
+                    <div class="news-card preview">
+                        <div class="source">Reuters</div>
+                        <div class="headline">Economic Reforms Drive Market Volatility</div>
+                    </div>
+                    <div class="news-card preview">
+                        <div class="source">Financial Times</div>
+                        <div class="headline">Policy Shifts Create Investment Uncertainty</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">See How Different Sources Cover the Same Story</h2>
+            <p class="section-subtitle">Compare headlines, angles, and perspectives from trusted news sources worldwide</p>
+            
+            <div class="feature-grid">
+                <!-- Feature 1: India vs Pakistan Coverage -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <h3>India-Pakistan Border Tensions</h3>
+                        <span class="story-tag">Breaking News</span>
+                    </div>
+                    <div class="news-sources">
+                        <div class="news-item">
+                            <div class="source-logo mint">Mint</div>
+                            <div class="headline">"India Responds Firmly to Cross-Border Provocations"</div>
+                            <div class="perspective-tag indian">Indian Perspective</div>
+                        </div>
+                        <div class="news-item">
+                            <div class="source-logo ndtv">NDTV</div>
+                            <div class="headline">"Diplomatic Channels Remain Open Despite Border Incident"</div>
+                            <div class="perspective-tag neutral">Neutral Reporting</div>
+                        </div>
+                        <div class="news-item">
+                            <div class="source-logo bbc">BBC</div>
+                            <div class="headline">"South Asian Neighbors Face Fresh Border Dispute"</div>
+                            <div class="perspective-tag international">International View</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2: Technology Coverage -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <h3>AI Regulation Debate</h3>
+                        <span class="story-tag">Technology</span>
+                    </div>
+                    <div class="news-sources">
+                        <div class="news-item">
+                            <div class="source-logo techcrunch">TechCrunch</div>
+                            <div class="headline">"New AI Rules Could Stifle Innovation, Industry Warns"</div>
+                            <div class="perspective-tag business">Business Focus</div>
+                        </div>
+                        <div class="news-item">
+                            <div class="source-logo guardian">The Guardian</div>
+                            <div class="headline">"AI Safety Measures Essential for Public Protection"</div>
+                            <div class="perspective-tag safety">Safety Emphasis</div>
+                        </div>
+                        <div class="news-item">
+                            <div class="source-logo reuters">Reuters</div>
+                            <div class="headline">"Governments Struggle to Balance AI Innovation and Control"</div>
+                            <div class="perspective-tag balanced">Balanced Coverage</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3: Economic Coverage -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <h3>Global Economic Outlook</h3>
+                        <span class="story-tag">Business</span>
+                    </div>
+                    <div class="news-sources">
+                        <div class="news-item">
+                            <div class="source-logo wsj">Wall Street Journal</div>
+                            <div class="headline">"Markets Show Resilience Despite Global Uncertainties"</div>
+                            <div class="perspective-tag optimistic">Optimistic Tone</div>
+                        </div>
+                        <div class="news-item">
+                            <div class="source-logo ft">Financial Times</div>
+                            <div class="headline">"Economic Headwinds Pose Challenges for Growth"</div>
+                            <div class="perspective-tag cautious">Cautious Analysis</div>
+                        </div>
+                        <div class="news-item">
+                            <div class="source-logo bloomberg">Bloomberg</div>
+                            <div class="headline">"Mixed Signals in Global Economic Data"</div>
+                            <div class="perspective-tag analytical">Data-Driven</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signup Section -->
+    <section id="signup" class="signup">
+        <div class="container">
+            <div class="signup-content">
+                <h2>Get Early Access to NewsLens</h2>
+                <p>Be among the first to experience balanced news coverage. Join our early access program and help shape the future of news consumption.</p>
+                
+                <form id="signupForm" class="signup-form">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="your@email.com">
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Topics of Interest</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="topics" value="Politics">
+                                <span class="checkmark"></span>
+                                Politics
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="topics" value="Business">
+                                <span class="checkmark"></span>
+                                Business
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="topics" value="Technology">
+                                <span class="checkmark"></span>
+                                Technology
+                            </label>
+                        </div>
+                        <div class="error-message" id="topicsError"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                        <span class="btn-text">Join Early Access</span>
+                        <span class="btn-loading" style="display: none;">Signing up...</span>
+                    </button>
+                </form>
+                
+                <div id="thankYouMessage" class="thank-you-message" style="display: none;">
+                    <div class="success-icon">✓</div>
+                    <h3>Thank you for joining!</h3>
+                    <p>We'll notify you as soon as NewsLens is ready. Get ready to see news from every angle.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>NewsLens</h3>
+                    <p>Compare perspectives, stay informed.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#signup">Early Access</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 NewsLens. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
