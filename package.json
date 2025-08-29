@@ -8,9 +8,7 @@
     "build": "echo 'Static site - no build needed'",
     "start": "vercel dev"
   },
-  "dependencies": {
-    "mysql2": "^3.6.5"
-  },
+  "dependencies": {},
   "devDependencies": {
     "vercel": "^32.5.0"
   },
@@ -18,7 +16,8 @@
     "news",
     "aggregation",
     "perspectives",
-    "serverless"
+    "serverless",
+    "free-tier"
   ],
   "author": "News Aggregator Team",
   "license": "MIT"

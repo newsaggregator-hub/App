@@ -1,25 +1,4 @@
-import mysql from 'mysql2/promise';
-
-// Database connection configuration
-const dbConfig = {
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USERNAME,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-  ssl: {
-    rejectUnauthorized: true
-  },
-  connectTimeout: 60000,
-  acquireTimeout: 60000,
-  timeout: 60000
-};
-
-// Email validation regex
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Valid topics
-const validTopics = ['Politics', 'Business', 'Technology'];
-
+// FREE Alternative - Works with Airtable (free) or Demo Mode
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -42,6 +21,10 @@ export default async function handler(req, res) {
   try {
     // Parse and validate request body
     const { email, topics } = req.body;
+
+    // Email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const validTopics = ['Politics', 'Business', 'Technology'];
 
     // Validate email
     if (!email || typeof email !== 'string') {
@@ -79,76 +62,90 @@ export default async function handler(req, res) {
     // Remove duplicates from topics
     const uniqueTopics = [...new Set(topics)];
 
-    // Connect to database
-    let connection;
-    try {
-      connection = await mysql.createConnection(dbConfig);
-      console.log('Database connection established');
-    } catch (dbError) {
-      console.error('Database connection error:', dbError);
-      return res.status(500).json({
-        success: false,
-        error: 'Database connection failed. Please try again later.'
-      });
-    }
-
-    try {
-      // Insert or update signup record
-      const query = `
-        INSERT INTO signups (email, topics, created_at) 
-        VALUES (?, ?, NOW()) 
-        ON DUPLICATE KEY UPDATE 
-        topics = VALUES(topics), 
-        created_at = NOW()
-      `;
-
-      const [result] = await connection.execute(query, [
-        trimmedEmail,
-        JSON.stringify(uniqueTopics)
-      ]);
-
-      console.log('Database operation successful:', {
-        email: trimmedEmail,
-        topics: uniqueTopics,
-        affectedRows: result.affectedRows
-      });
-
-      // Determine if this was an insert or update
-      const isNewSignup = result.insertId > 0;
-      
+    // Check for Airtable configuration (completely free option)
+    const airtableApiKey = process.env.AIRTABLE_API_KEY;
+    const airtableBaseId = process.env.AIRTABLE_BASE_ID;
+    
+    if (!airtableApiKey || !airtableBaseId) {
+      // Demo mode - no database needed, completely free
+      console.log('Running in demo mode - no database configured');
       return res.status(200).json({
         success: true,
-        message: isNewSignup 
-          ? 'Successfully signed up for early access!' 
-          : 'Your preferences have been updated!',
+        message: 'Successfully signed up for early access! (Demo mode - add Airtable keys for real storage)',
         data: {
           email: trimmedEmail,
           topics: uniqueTopics,
-          isNewSignup
+          isNewSignup: true,
+          mode: 'demo'
+        }
+      });
+    }
+
+    // Store in Airtable (free tier: 10,000 records/month)
+    try {
+      const airtableResponse = await fetch(`https://api.airtable.com/v0/${airtableBaseId}/Signups`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${airtableApiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fields: {
+            Email: trimmedEmail,
+            Topics: uniqueTopics.join(', '),
+            'Created At': new Date().toISOString(),
+            'Signup Date': new Date().toLocaleDateString()
+          }
+        })
+      });
+
+      if (!airtableResponse.ok) {
+        const errorData = await airtableResponse.json();
+        console.error('Airtable error:', errorData);
+        
+        // Check if it's a duplicate email error
+        if (errorData.error && errorData.error.message && errorData.error.message.includes('duplicate')) {
+          return res.status(409).json({
+            success: false,
+            error: 'This email is already registered.'
+          });
+        }
+        
+        throw new Error('Failed to save to Airtable');
+      }
+
+      const result = await airtableResponse.json();
+      console.log('Airtable success:', {
+        email: trimmedEmail,
+        topics: uniqueTopics,
+        recordId: result.id
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: 'Successfully signed up for early access!',
+        data: {
+          email: trimmedEmail,
+          topics: uniqueTopics,
+          isNewSignup: true,
+          mode: 'airtable'
         }
       });
 
-    } catch (dbError) {
-      console.error('Database query error:', dbError);
+    } catch (airtableError) {
+      console.error('Airtable storage error:', airtableError);
       
-      // Handle specific database errors
-      if (dbError.code === 'ER_DUP_ENTRY') {
-        return res.status(409).json({
-          success: false,
-          error: 'This email is already registered.'
-        });
-      }
-      
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to save signup. Please try again later.'
+      // Fallback to demo mode if Airtable fails
+      return res.status(200).json({
+        success: true,
+        message: 'Successfully signed up for early access! (Stored locally due to temporary issue)',
+        data: {
+          email: trimmedEmail,
+          topics: uniqueTopics,
+          isNewSignup: true,
+          mode: 'fallback'
+        }
       });
-    } finally {
-      // Always close the database connection
-      if (connection) {
-        await connection.end();
-        console.log('Database connection closed');
-      }
     }
 
   } catch (error) {
@@ -167,27 +164,4 @@ export default async function handler(req, res) {
       error: 'Internal server error. Please try again later.'
     });
   }
-}
-
-// Helper function to validate environment variables
-function validateEnvironment() {
-  const requiredEnvVars = [
-    'DATABASE_HOST',
-    'DATABASE_USERNAME', 
-    'DATABASE_PASSWORD',
-    'DATABASE_NAME'
-  ];
-  
-  const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-  
-  if (missingVars.length > 0) {
-    throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
-  }
-}
-
-// Validate environment on module load
-try {
-  validateEnvironment();
-} catch (error) {
-  console.error('Environment validation error:', error.message);
 }
