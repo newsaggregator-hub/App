@@ -7,9 +7,9 @@ A static landing page and serverless backend for a news aggregation platform tha
 - **Responsive Landing Page**: Modern, mobile-first design with hero section and feature showcase
 - **Email Signup**: Early access signup form with client-side validation
 - **Serverless Backend**: Node.js API endpoint for handling signups
-- **Database Integration**: PlanetScale MySQL database for storing user signups
+- **Database Integration**: Airtable for storing user signups (no-cost solution)
 - **Analytics Ready**: Google Analytics integration for tracking user engagement
-- **Free Tier Deployment**: Designed to work within free tiers of Vercel and PlanetScale
+- **Free Tier Deployment**: Designed to work within free tiers of Vercel and Airtable
 
 ## 📁 Project Structure
 
@@ -22,9 +22,10 @@ news-aggregator/
 ├── vercel.json             # Vercel deployment configuration
 ├── .env.example            # Environment variables template
 ├── api/
-│   └── signup.js           # Serverless function for signup API
+│   ├── signup.js           # Serverless function for signup API (Airtable version)
+│   └── signup-free.js      # Free tier Airtable implementation
 ├── database/
-│   └── schema.sql          # Database schema for PlanetScale
+│   └── schema.sql          # Database schema (for reference)
 └── README.md               # This file
 ```
 
@@ -32,7 +33,7 @@ news-aggregator/
 
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript
 - **Backend**: Node.js (Vercel Functions)
-- **Database**: PlanetScale (MySQL)
+- **Database**: Airtable (NoSQL)
 - **Hosting**: Vercel (Frontend + Backend)
 - **Analytics**: Google Analytics
 
@@ -42,7 +43,7 @@ news-aggregator/
 - Git installed
 - GitHub account
 - Vercel account
-- PlanetScale account
+- Airtable account
 
 ## 🚀 Quick Start
 
@@ -57,22 +58,20 @@ cd news-aggregator
 npm install
 ```
 
-### 2. Database Setup (PlanetScale)
+### 2. Database Setup (Airtable)
 
-1. **Create PlanetScale Database**:
-   - Go to [PlanetScale Dashboard](https://app.planetscale.com)
-   - Create a new database named `newslens`
-   - Create a branch (e.g., `main`)
+1. **Create Airtable Base**:
+   - Go to [Airtable](https://airtable.com/) and create a new base
+   - Name it "NewsLens Signups" or similar
+   - Create a table called "Signups" with the following fields:
+     - Email (Single line text, required)
+     - Topics (Multiple select, options: Politics, Business, Technology, Science, Entertainment, Sports, Health)
+     - Created At (Date & time, auto-filled)
 
-2. **Run Database Schema**:
-   ```bash
-   # Connect to your database and run the schema
-   # Copy the contents of database/schema.sql and execute in PlanetScale console
-   ```
-
-3. **Get Connection Details**:
-   - Go to your database → Connect → Create password
-   - Copy the connection details for environment variables
+2. **Get API Credentials**:
+   - Go to your Airtable account settings → API
+   - Copy your API key
+   - Note your Base ID (found in the API documentation for your base)
 
 ### 3. Environment Configuration
 
@@ -81,12 +80,11 @@ npm install
    cp .env.example .env.local
    ```
 
-2. **Update `.env.local`** with your PlanetScale credentials:
+2. **Update `.env.local`** with your Airtable credentials:
    ```env
-   DATABASE_HOST=your-host.connect.psdb.cloud
-   DATABASE_USERNAME=your-username
-   DATABASE_PASSWORD=your-password
-   DATABASE_NAME=newslens
+   AIRTABLE_API_KEY=your-airtable-api-key
+   AIRTABLE_BASE_ID=your-airtable-base-id
+   AIRTABLE_TABLE_NAME=Signups
    ```
 
 3. **Update Google Analytics** (Optional):
@@ -117,15 +115,14 @@ Visit `http://localhost:3000` to see the landing page.
    - Go to [Vercel Dashboard](https://vercel.com/dashboard)
    - Import your GitHub repository
    - Add environment variables in Vercel dashboard:
-     - `DATABASE_HOST`
-     - `DATABASE_USERNAME`
-     - `DATABASE_PASSWORD`
-     - `DATABASE_NAME`
+     - `AIRTABLE_API_KEY`
+     - `AIRTABLE_BASE_ID`
+     - `AIRTABLE_TABLE_NAME`
 
 3. **Test Deployment**:
    - Visit your deployed URL
    - Test the signup form
-   - Check database for new entries
+   - Check Airtable base for new entries
 
 ## 🔧 API Endpoints
 
@@ -226,8 +223,8 @@ ORDER BY count DESC;
 
 1. **Database Connection Failed**:
    - Check environment variables are set correctly
-   - Verify PlanetScale database is active
-   - Ensure connection string format is correct
+   - Verify Airtable API key and base ID are valid
+   - Ensure Airtable table name matches exactly
 
 2. **CORS Errors**:
    - Check `vercel.json` CORS configuration
@@ -280,7 +277,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 For issues and questions:
 - Check the troubleshooting section above
-- Review Vercel and PlanetScale documentation
+- Review Vercel and Airtable documentation
 - Open an issue in the GitHub repository
 
 ---
