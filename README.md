@@ -1,285 +1,192 @@
-# NewsLens - Multi-Perspective News Aggregation Platform
+# Waitlist Landing Page
 
-A static landing page and serverless backend for a news aggregation platform that helps users compare perspectives on the same story from different sources.
+A modern, responsive waitlist landing page with email collection and database integration. Built with Node.js, Express, PostgreSQL, and vanilla JavaScript.
 
-## 🚀 Features
+## Features
 
-- **Responsive Landing Page**: Modern, mobile-first design with hero section and feature showcase
-- **Email Signup**: Early access signup form with client-side validation
-- **Serverless Backend**: Node.js API endpoint for handling signups
-- **Database Integration**: Airtable for storing user signups (no-cost solution)
-- **Analytics Ready**: Google Analytics integration for tracking user engagement
-- **Free Tier Deployment**: Designed to work within free tiers of Vercel and Airtable
+- **Dual Signup Options**: Waitlist signup with topic preferences and free access signup
+- **Email Validation**: Comprehensive email validation and sanitization
+- **Database Integration**: PostgreSQL database with proper schema design
+- **CORS Support**: Proper CORS configuration for both development and production
+- **Error Handling**: Comprehensive error handling and logging
+- **Testing**: Complete test suite for API endpoints
+- **Responsive Design**: Mobile-friendly landing page
 
-## 📁 Project Structure
+## Database Schema
 
-```
-news-aggregator/
-├── index.html              # Main landing page
-├── styles.css              # Responsive CSS styling
-├── script.js               # Client-side JavaScript
-├── package.json            # Node.js dependencies
-├── vercel.json             # Vercel deployment configuration
-├── .env.example            # Environment variables template
-├── api/
-│   ├── signup.js           # Serverless function for signup API (Airtable version)
-│   └── signup-free.js      # Free tier Airtable implementation
-├── database/
-│   └── schema.sql          # Database schema (for reference)
-└── README.md               # This file
-```
+The application uses the following tables:
+- `waitlist_signups` - For waitlist registrations with topic preferences
+- `free_signups` - For free access registrations
+- `signup_events` - Event logging for analytics
+- `landing_page_metrics` - Metrics tracking
 
-## 🛠️ Tech Stack
+## Setup Instructions
 
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Backend**: Node.js (Vercel Functions)
-- **Database**: Airtable (NoSQL)
-- **Hosting**: Vercel (Frontend + Backend)
-- **Analytics**: Google Analytics
+### 1. Prerequisites
 
-## 📋 Prerequisites
+- Node.js (v16 or higher)
+- PostgreSQL database
+- npm or yarn
 
-- Node.js 18+ installed
-- Git installed
-- GitHub account
-- Vercel account
-- Airtable account
-
-## 🚀 Quick Start
-
-### 1. Clone and Setup
+### 2. Installation
 
 ```bash
 # Clone the repository
 git clone <your-repo-url>
-cd news-aggregator
+cd waitlist-landing-page
 
 # Install dependencies
 npm install
+
+# Set up environment variables
+cp .env.example .env
 ```
 
-### 2. Database Setup (Airtable)
+### 3. Database Setup
 
-1. **Create Airtable Base**:
-   - Go to [Airtable](https://airtable.com/) and create a new base
-   - Name it "NewsLens Signups" or similar
-   - Create a table called "Signups" with the following fields:
-     - Email (Single line text, required)
-     - Topics (Multiple select, options: Politics, Business, Technology, Science, Entertainment, Sports, Health)
-     - Created At (Date & time, auto-filled)
-
-2. **Get API Credentials**:
-   - Go to your Airtable account settings → API
-   - Copy your API key
-   - Note your Base ID (found in the API documentation for your base)
-
-### 3. Environment Configuration
-
-1. **Copy environment template**:
-   ```bash
-   cp .env.example .env.local
+1. Create a PostgreSQL database named `waitlist_db`
+2. Update the `.env` file with your database credentials:
+   ```
+   DATABASE_URL=postgresql://username:password@localhost:5432/waitlist_db
+   NODE_ENV=development
+   PORT=3000
    ```
 
-2. **Update `.env.local`** with your Airtable credentials:
-   ```env
-   AIRTABLE_API_KEY=your-airtable-api-key
-   AIRTABLE_BASE_ID=your-airtable-base-id
-   AIRTABLE_TABLE_NAME=Signups
-   ```
+3. Run the database schema:
+```bash
+psql -d waitlist_db -f database/schema.sql
+```
 
-3. **Update Google Analytics** (Optional):
-   - Replace `GA_MEASUREMENT_ID` in `index.html` with your actual GA ID
-
-### 4. Local Development
+### 4. Running the Application
 
 ```bash
-# Start development server
+# Development mode with auto-reload
 npm run dev
 
-# Or use Vercel CLI
-npx vercel dev
+# Production mode
+npm start
+
+# Run tests
+npm test
 ```
 
-Visit `http://localhost:3000` to see the landing page.
+### 5. Access the Application
 
-### 5. Deploy to Vercel
+- Frontend: http://localhost:3000
+- Health Check: http://localhost:3000/health
+- API Endpoints:
+  - POST /api/signup - Waitlist signup
+  - POST /api/signup-free - Free access signup
+  - GET /health - Health check
 
-1. **Push to GitHub**:
-   ```bash
-   git add .
-   git commit -m "Initial commit"
-   git push origin main
-   ```
+## API Documentation
 
-2. **Deploy to Vercel**:
-   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
-   - Import your GitHub repository
-   - Add environment variables in Vercel dashboard:
-     - `AIRTABLE_API_KEY`
-     - `AIRTABLE_BASE_ID`
-     - `AIRTABLE_TABLE_NAME`
+### Waitlist Signup (POST /api/signup)
 
-3. **Test Deployment**:
-   - Visit your deployed URL
-   - Test the signup form
-   - Check Airtable base for new entries
-
-## 🔧 API Endpoints
-
-### POST /api/signup
-
-Handles user signup for early access.
-
-**Request Body**:
+**Request Body:**
 ```json
 {
   "email": "user@example.com",
-  "topics": ["Politics", "Business", "Technology"]
+  "topics": ["technology", "business"]
 }
 ```
 
-**Response**:
+**Response:**
 ```json
 {
-  "success": true,
-  "message": "Successfully signed up for early access!",
+  "message": "Successfully joined the waitlist!",
   "data": {
+    "id": 1,
     "email": "user@example.com",
-    "topics": ["Politics", "Business", "Technology"],
-    "isNewSignup": true
+    "topics": ["technology", "business"],
+    "position": 42,
+    "createdAt": "2023-12-07T10:30:00.000Z"
   }
 }
 ```
 
-**Error Response**:
+### Free Signup (POST /api/signup-free)
+
+**Request Body:**
 ```json
 {
-  "success": false,
-  "error": "Please provide a valid email address."
+  "email": "user@example.com"
 }
 ```
 
-## 🎨 Customization
-
-### Styling
-- Modify `styles.css` for design changes
-- Update color scheme in CSS custom properties
-- Adjust responsive breakpoints as needed
-
-### Content
-- Update hero section text in `index.html`
-- Modify feature cards and news examples
-- Change company name and branding
-
-### Analytics
-- Replace Google Analytics ID in `index.html`
-- Add additional tracking events in `script.js`
-
-## 📊 Database Schema
-
-```sql
-CREATE TABLE signups (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  topics JSON NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+**Response:**
+```json
+{
+  "message": "Successfully registered for free access!",
+  "data": {
+    "id": 1,
+    "email": "user@example.com",
+    "createdAt": "2023-12-07T10:30:00.000Z"
+  }
+}
 ```
 
-## 🔍 Monitoring and Analytics
+## Environment Variables
 
-### Database Queries
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DATABASE_URL` | PostgreSQL connection string | - |
+| `NODE_ENV` | Environment mode | `development` |
+| `PORT` | Server port | `3000` |
 
-**View all signups**:
-```sql
-SELECT * FROM signups ORDER BY created_at DESC;
+## Testing
+
+Run the comprehensive test suite:
+
+```bash
+npm test
 ```
 
-**Signup statistics**:
-```sql
-SELECT 
-  COUNT(*) as total_signups,
-  DATE(created_at) as signup_date
-FROM signups 
-GROUP BY DATE(created_at)
-ORDER BY signup_date DESC;
+The test suite includes:
+- Valid signup scenarios
+- Error handling (duplicate emails, invalid inputs)
+- Health check endpoint
+- Both waitlist and free signup endpoints
+
+## Deployment
+
+### Vercel Deployment
+
+1. Connect your repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on git push
+
+### Manual Deployment
+
+1. Build the application: `npm install --production`
+2. Set environment variables
+3. Start the server: `npm start`
+
+## File Structure
+
+```
+├── api/
+│   ├── signup.js          # Waitlist signup endpoint
+│   └── signup-free.js     # Free signup endpoint
+├── database/
+│   └── schema.sql         # Database schema
+├── index.html            # Landing page
+├── styles.css           # CSS styles
+├── script.js            # Frontend JavaScript
+├── server.js            # Express server
+├── test-api.js          # API test suite
+├── package.json         # Dependencies
+└── README.md           # This file
 ```
 
-**Topic preferences**:
-```sql
-SELECT 
-  topic_value as topic,
-  COUNT(*) as count
-FROM signups
-CROSS JOIN JSON_TABLE(topics, '$[*]' COLUMNS (topic_value VARCHAR(50) PATH '$')) as topics_table
-GROUP BY topic_value
-ORDER BY count DESC;
-```
-
-## 🚨 Troubleshooting
-
-### Common Issues
-
-1. **Database Connection Failed**:
-   - Check environment variables are set correctly
-   - Verify Airtable API key and base ID are valid
-   - Ensure Airtable table name matches exactly
-
-2. **CORS Errors**:
-   - Check `vercel.json` CORS configuration
-   - Verify API endpoint is accessible
-
-3. **Form Validation Issues**:
-   - Check browser console for JavaScript errors
-   - Verify email regex pattern
-   - Ensure topics are being selected
-
-4. **Deployment Issues**:
-   - Check Vercel build logs
-   - Verify all environment variables are set in Vercel dashboard
-   - Ensure `package.json` dependencies are correct
-
-### Debug Mode
-
-Enable debug logging by adding to your environment:
-```env
-NODE_ENV=development
-```
-
-## 📈 Performance Optimization
-
-- **Images**: Add optimized images for better visual appeal
-- **Caching**: Implement proper caching headers
-- **CDN**: Use Vercel's built-in CDN for static assets
-- **Database**: Add indexes for frequently queried columns
-
-## 🔐 Security Considerations
-
-- **Input Validation**: All inputs are validated on both client and server
-- **SQL Injection**: Using parameterized queries with mysql2
-- **Rate Limiting**: Consider adding rate limiting for production
-- **HTTPS**: Vercel provides HTTPS by default
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Add tests for new features
 5. Submit a pull request
 
-## 📞 Support
+## License
 
-For issues and questions:
-- Check the troubleshooting section above
-- Review Vercel and Airtable documentation
-- Open an issue in the GitHub repository
-
----
-
-**Built with ❤️ for better news consumption**
+MIT License - see LICENSE file for details.

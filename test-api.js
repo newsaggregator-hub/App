@@ -1,99 +1,173 @@
-const https = require('https');
+const axios = require('axios');
 
-// Test the signup API endpoint
-function testSignupAPI() {
-    console.log('Testing Signup API...');
+const BASE_URL = process.env.NODE_ENV === 'production' 
+    ? 'https://your-vercel-domain.vercel.app' 
+    : 'http://localhost:3000';
+
+async function testWaitlistSignup() {
+    console.log('Testing waitlist signup API...\n');
     
-    const data = JSON.stringify({
-        name: 'Test User',
-        email: 'test@example.com',
-        phone: '+1234567890',
-        company: 'Test Company',
-        message: 'This is a test message from the API test'
-    });
+    try {
+        // Test valid signup
+        console.log('1. Testing valid signup:');
+        const validPayload = {
+            email: `test${Date.now()}@example.com`,
+            topics: ['technology', 'business']
+        };
 
-    const options = {
-        hostname: 'localhost',
-        port: 3000,
-        path: '/api/signup',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
+        const response1 = await axios.post(`${BASE_URL}/api/signup`, validPayload);
+        console.log('✅ Success:', response1.data);
+        console.log('Status:', response1.status);
+        console.log('---\n');
+
+        // Test duplicate email (should update topics for unverified users)
+        console.log('2. Testing duplicate email (update for unverified):');
+        try {
+            const response2 = await axios.post(`${BASE_URL}/api/signup`, validPayload);
+            console.log('✅ Success (topics updated for unverified user):', response2.data);
+            console.log('Status:', response2.status);
+        } catch (error) {
+            console.log('❌ Unexpected error:', error.response?.data || error.message);
+            console.log('Status:', error.response?.status);
         }
-    };
+        console.log('---\n');
 
-    const req = https.request(options, (res) => {
-        console.log(`Status Code: ${res.statusCode}`);
-        
-        let responseData = '';
-        res.on('data', (chunk) => {
-            responseData += chunk;
-        });
+        // Test invalid email
+        console.log('3. Testing invalid email:');
+        try {
+            const invalidEmailPayload = {
+                email: 'invalid-email',
+                topics: ['technology']
+            };
+            const response3 = await axios.post(`${BASE_URL}/api/signup`, invalidEmailPayload);
+            console.log('❌ Should have failed with validation error');
+        } catch (error) {
+            console.log('✅ Expected error:', error.response?.data || error.message);
+            console.log('Status:', error.response?.status);
+        }
+        console.log('---\n');
 
-        res.on('end', () => {
-            console.log('Response:', responseData);
-            console.log('API Test Completed!');
-        });
-    });
+        // Test invalid topics
+        console.log('4. Testing invalid topics:');
+        try {
+            const invalidTopicsPayload = {
+                email: `test${Date.now() + 1}@example.com`,
+                topics: ['invalid-topic']
+            };
+            const response4 = await axios.post(`${BASE_URL}/api/signup`, invalidTopicsPayload);
+            console.log('❌ Should have failed with validation error');
+        } catch (error) {
+            console.log('✅ Expected error:', error.response?.data || error.message);
+            console.log('Status:', error.response?.status);
+        }
+        console.log('---\n');
 
-    req.on('error', (error) => {
-        console.error('Error:', error.message);
-        console.log('Note: This test requires the server to be running locally on port 3000');
-        console.log('Run: npm run dev to start the development server');
-    });
+        // Test too many topics
+        console.log('5. Testing too many topics:');
+        try {
+            const manyTopicsPayload = {
+                email: `test${Date.now() + 2}@example.com`,
+                topics: ['tech', 'business', 'politics', 'health', 'science', 'entertainment']
+            };
+            const response5 = await axios.post(`${BASE_URL}/api/signup`, manyTopicsPayload);
+            console.log('❌ Should have failed with validation error');
+        } catch (error) {
+            console.log('✅ Expected error:', error.response?.data || error.message);
+            console.log('Status:', error.response?.status);
+        }
+        console.log('---\n');
 
-    req.write(data);
-    req.end();
+    } catch (error) {
+        console.error('❌ Test failed:', error.message);
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+        }
+    }
 }
 
-// Test the free signup API endpoint
-function testFreeSignupAPI() {
-    console.log('\nTesting Free Signup API...');
+async function testFreeSignup() {
+    console.log('Testing free signup API...\n');
     
-    const data = JSON.stringify({
-        name: 'Free Test User',
-        email: 'free@example.com'
-    });
+    try {
+        // Test valid free signup
+        console.log('1. Testing valid free signup:');
+        const validPayload = {
+            email: `free${Date.now()}@example.com`
+        };
 
-    const options = {
-        hostname: 'localhost',
-        port: 3000,
-        path: '/api/signup-free',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
+        const response1 = await axios.post(`${BASE_URL}/api/signup-free`, validPayload);
+        console.log('✅ Success:', response1.data);
+        console.log('Status:', response1.status);
+        console.log('---\n');
+
+        // Test duplicate email (should update for unverified users)
+        console.log('2. Testing duplicate email (update for unverified):');
+        try {
+            const response2 = await axios.post(`${BASE_URL}/api/signup-free`, validPayload);
+            console.log('✅ Success (updated for unverified user):', response2.data);
+            console.log('Status:', response2.status);
+        } catch (error) {
+            console.log('❌ Unexpected error:', error.response?.data || error.message);
+            console.log('Status:', error.response?.status);
         }
-    };
+        console.log('---\n');
 
-    const req = https.request(options, (res) => {
-        console.log(`Status Code: ${res.statusCode}`);
-        
-        let responseData = '';
-        res.on('data', (chunk) => {
-            responseData += chunk;
-        });
+        // Test invalid email
+        console.log('3. Testing invalid email:');
+        try {
+            const invalidEmailPayload = {
+                email: 'invalid-email'
+            };
+            const response3 = await axios.post(`${BASE_URL}/api/signup-free`, invalidEmailPayload);
+            console.log('❌ Should have failed with validation error');
+        } catch (error) {
+            console.log('✅ Expected error:', error.response?.data || error.message);
+            console.log('Status:', error.response?.status);
+        }
+        console.log('---\n');
 
-        res.on('end', () => {
-            console.log('Response:', responseData);
-        });
-    });
-
-    req.on('error', (error) => {
-        console.error('Error:', error.message);
-    });
-
-    req.write(data);
-    req.end();
+    } catch (error) {
+        console.error('❌ Test failed:', error.message);
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+        }
+    }
 }
 
-// Run tests
-console.log('Starting API Tests...');
-console.log('Make sure the development server is running first!');
-console.log('Run: npm run dev\n');
+async function testHealthCheck() {
+    console.log('Testing health check endpoint...\n');
+    
+    try {
+        const response = await axios.get(`${BASE_URL}/health`);
+        console.log('✅ Health check successful:');
+        console.log('Status:', response.status);
+        console.log('Data:', response.data);
+        console.log('---\n');
+    } catch (error) {
+        console.error('❌ Health check failed:', error.message);
+    }
+}
 
-setTimeout(() => {
-    testSignupAPI();
-    setTimeout(testFreeSignupAPI, 2000);
-}, 1000);
+async function runAllTests() {
+    console.log('🚀 Starting API tests...\n');
+    
+    await testHealthCheck();
+    await testWaitlistSignup();
+    await testFreeSignup();
+    
+    console.log('🎉 All tests completed!');
+}
+
+// Run tests if this file is executed directly
+if (require.main === module) {
+    runAllTests().catch(console.error);
+}
+
+module.exports = {
+    testWaitlistSignup,
+    testFreeSignup,
+    testHealthCheck,
+    runAllTests
+};
