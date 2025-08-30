@@ -1,8 +1,7 @@
 // Form validation and submission
 document.addEventListener('DOMContentLoaded', function() {
     const signupForm = document.getElementById('signup-form');
-    const successMessage = document.getElementById('success-message');
-    const errorMessage = document.getElementById('error-message');
+    const thankYouMessage = document.getElementById('thank-you-message');
     const emailInput = document.getElementById('email');
     const emailError = document.getElementById('email-error');
     const topicsError = document.getElementById('topics-error');
@@ -46,112 +45,115 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Handle form submission
-    signupForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // Reset error messages
-        hideError(emailError);
-        hideError(topicsError);
-        errorMessage.style.display = 'none';
-        
-        let isValid = true;
-        
-        // Validate email
-        const email = emailInput.value.trim();
-        if (!email) {
-            showError(emailError, 'Email is required');
-            isValid = false;
-        } else if (!isValidEmail(email)) {
-            showError(emailError, 'Please enter a valid email address');
-            isValid = false;
-        }
-        
-        // Validate topics
-        if (!hasSelectedTopics()) {
-            showError(topicsError, 'Please select at least one topic of interest');
-            isValid = false;
-        }
-        
-        if (!isValid) return;
-        
-        // Prepare form data
-        const formData = {
-            email: email,
-            topics: Array.from(document.querySelectorAll('input[name="topics"]:checked'))
-                .map(checkbox => checkbox.value)
-        };
-        
-        // Show loading state
-        const submitButton = signupForm.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-        submitButton.textContent = 'Submitting...';
-        submitButton.disabled = true;
-        signupForm.classList.add('loading');
-        
-        try {
-            // Try to use the Vercel serverless function first
-            const response = await fetch('/api/signup-free', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            });
+    if (signupForm) {
+        signupForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            if (response.ok) {
-                // Success - hide form and show success message
-                signupForm.style.display = 'none';
-                successMessage.style.display = 'block';
-                
-                // Send to Google Analytics (if available)
-                if (typeof gtag === 'function') {
-                    gtag('event', 'signup_success', {
-                        'event_category': 'conversion',
-                        'event_label': 'early_access_signup'
-                    });
-                }
-            } else {
-                throw new Error('Server error');
+            // Reset error messages
+            if (emailError) hideError(emailError);
+            if (topicsError) hideError(topicsError);
+            
+            let isValid = true;
+            
+            // Validate email
+            const email = emailInput.value.trim();
+            if (!email) {
+                if (emailError) showError(emailError, 'Email is required');
+                isValid = false;
+            } else if (!isValidEmail(email)) {
+                if (emailError) showError(emailError, 'Please enter a valid email address');
+                isValid = false;
             }
-        } catch (error) {
-            console.error('Signup error:', error);
             
-            // Fallback: Show success message even if API fails
-            // This is a common pattern for landing pages to avoid losing signups
-            signupForm.style.display = 'none';
-            successMessage.style.display = 'block';
+            // Validate topics
+            if (!hasSelectedTopics()) {
+                if (topicsError) showError(topicsError, 'Please select at least one topic of interest');
+                isValid = false;
+            }
             
-            // Also log the signup locally for backup
-            const signups = JSON.parse(localStorage.getItem('newsLensSignups') || '[]');
-            signups.push({
-                email: formData.email,
-                topics: formData.topics,
-                timestamp: new Date().toISOString()
-            });
-            localStorage.setItem('newsLensSignups', JSON.stringify(signups));
-        } finally {
-            // Restore button state
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-            signupForm.classList.remove('loading');
-        }
-    });
+            if (!isValid) return;
+            
+            // Prepare form data
+            const formData = {
+                email: email,
+                topics: Array.from(document.querySelectorAll('input[name="topics"]:checked'))
+                    .map(checkbox => checkbox.value)
+            };
+            
+            // Show loading state
+            const submitButton = signupForm.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Submitting...';
+            submitButton.disabled = true;
+            signupForm.classList.add('loading');
+            
+            try {
+                // Try to use the Vercel serverless function first
+                const response = await fetch('/api/signup-free', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    // Success - hide form and show success message
+                    signupForm.style.display = 'none';
+                    if (thankYouMessage) thankYouMessage.style.display = 'block';
+                    
+                    // Send to Google Analytics (if available)
+                    if (typeof gtag === 'function') {
+                        gtag('event', 'signup_success', {
+                            'event_category': 'conversion',
+                            'event_label': 'early_access_signup'
+                        });
+                    }
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                
+                // Fallback: Show success message even if API fails
+                // This is a common pattern for landing pages to avoid losing signups
+                signupForm.style.display = 'none';
+                if (thankYouMessage) thankYouMessage.style.display = 'block';
+                
+                // Also log the signup locally for backup
+                const signups = JSON.parse(localStorage.getItem('newsLensSignups') || '[]');
+                signups.push({
+                    email: formData.email,
+                    topics: formData.topics,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('newsLensSignups', JSON.stringify(signups));
+            } finally {
+                // Restore button state
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+                signupForm.classList.remove('loading');
+            }
+        });
+    }
 
     // Real-time validation
-    emailInput.addEventListener('blur', function() {
-        const email = this.value.trim();
-        if (email && !isValidEmail(email)) {
-            showError(emailError, 'Please enter a valid email address');
-        } else {
-            hideError(emailError);
-        }
-    });
+    if (emailInput) {
+        emailInput.addEventListener('blur', function() {
+            const email = this.value.trim();
+            if (email && !isValidEmail(email)) {
+                if (emailError) showError(emailError, 'Please enter a valid email address');
+            } else {
+                if (emailError) hideError(emailError);
+            }
+        });
+    }
 
     // Topics validation on change
     document.querySelectorAll('input[name="topics"]').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             if (hasSelectedTopics()) {
-                hideError(topicsError);
+                if (topicsError) hideError(topicsError);
             }
         });
     });
@@ -187,6 +189,24 @@ document.addEventListener('DOMContentLoaded', function() {
         
         card.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Expandable topic blocks for comparison page
+    document.querySelectorAll('.topic-header').forEach(header => {
+        header.addEventListener('click', function() {
+            const topicBlock = this.parentElement;
+            const isExpanded = topicBlock.classList.contains('expanded');
+            
+            // Close all other blocks
+            document.querySelectorAll('.topic-block').forEach(block => {
+                block.classList.remove('expanded');
+            });
+            
+            // Toggle current block
+            if (!isExpanded) {
+                topicBlock.classList.add('expanded');
+            }
         });
     });
 

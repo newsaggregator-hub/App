@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NewsLens - Balanced News Coverage</title>
+  <title>NewsLens - Get Early Access</title>
   <link rel="stylesheet" href="styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -12,11 +12,11 @@
   <header class="header">
     <div class="container">
       <div class="logo">
-        <h1>NewsLens</h1>
+        <h1><strong>NewsLens</strong></h1>
       </div>
       <nav class="nav">
-        <a href="#features">Features</a>
-        <a href="#how-it-works">How It Works</a>
+        <a href="features.html">Features</a>
+        <a href="comparison.html">Comparison</a>
         <a href="#signup" class="nav-cta">Get Early Access</a>
       </nav>
       <button class="mobile-menu-btn" aria-label="Toggle menu">
@@ -31,52 +31,10 @@
   <section class="hero" id="hero">
     <div class="container">
       <div class="hero-content">
-        <h1 class="hero-title">Break Free from Echo Chambers</h1>
-        <p class="hero-subtitle">Get balanced news coverage by comparing how different sources report the same events. Make informed decisions with multiple perspectives at your fingertips.</p>
+        <h1 class="hero-title">Get Early Access to NewsLens</h1>
+        <p class="hero-subtitle">Be among the first to experience balanced news coverage. Join our early access program and help shape the future of news consumption.</p>
         <div class="hero-cta">
           <a href="#signup" class="btn btn-primary">Join Early Access</a>
-          <a href="#features" class="btn btn-secondary">Learn More</a>
-        </div>
-        <div class="hero-stats">
-          <div class="stat">
-            <span class="stat-number">50+</span>
-            <span class="stat-label">News Sources</span>
-          </div>
-          <div class="stat">
-            <span class="stat-number">1000+</span>
-            <span class="stat-label">Daily Comparisons</span>
-          </div>
-          <div class="stat">
-            <span class="stat-number">95%</span>
-            <span class="stat-label">User Satisfaction</span>
-          </div>
-        </div>
-      </div>
-      <div class="hero-visual">
-        <div class="news-comparison-mockup">
-          <div class="mockup-header">
-            <div class="mockup-dots">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-          <div class="comparison-cards">
-            <div class="source-card left">
-              <div class="source-header">
-                <div class="source-logo"></div>
-                <span class="source-name">Source A</span>
-              </div>
-              <p class="headline">"Major breakthrough in climate policy announced today"</p>
-            </div>
-            <div class="source-card right">
-              <div class="source-header">
-                <div class="source-logo"></div>
-                <span class="source-name">Source B</span>
-              </div>
-              <p class="headline">"Government unveils new environmental regulations"</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -158,74 +116,46 @@
   <section id="signup" class="signup">
     <div class="container">
       <div class="signup-content">
-        <div class="signup-text">
-          <h2>Be Among the First to Experience Balanced News</h2>
-          <p>Join our early access program and help shape the future of news consumption. Limited spots available.</p>
-          <div class="benefits">
-            <div class="benefit">✓ Early access to all features</div>
-            <div class="benefit">✓ Direct influence on product development</div>
-            <div class="benefit">✓ Priority support</div>
+        <h2>Get Early Access to NewsLens</h2>
+        <p>Be among the first to experience balanced news coverage. Join our early access program and help shape the future of news consumption.</p>
+        
+        <form id="signup-form" class="signup-form">
+          <div class="form-group">
+            <input type="email" id="email" name="email" placeholder="Email Address" required />
+            <div id="email-error" class="error-message"></div>
           </div>
-        </div>
-        <div class="signup-form-container">
-          <form id="signup-form" class="signup-form">
-            <h3>Join Early Access</h3>
-            <div class="form-group">
-              <label for="email">Email address</label>
-              <input type="email" id="email" name="email" placeholder="you@example.com" required />
-              <div id="email-error" class="error-message"></div>
+          
+          <div class="form-group">
+            <label>Topics of Interest</label>
+            <div class="topics-list">
+              <label class="topic-item">
+                <input type="checkbox" name="topics" value="politics" />
+                <span class="checkmark"></span>
+                Politics
+              </label>
+              <label class="topic-item">
+                <input type="checkbox" name="topics" value="business" />
+                <span class="checkmark"></span>
+                Business
+              </label>
+              <label class="topic-item">
+                <input type="checkbox" name="topics" value="technology" />
+                <span class="checkmark"></span>
+                Technology
+              </label>
             </div>
-            
-            <div class="form-group">
-              <label>Topics I'm interested in:</label>
-              <div class="checkbox-grid">
-                <label class="checkbox-label">
-                  <input type="checkbox" name="topics" value="politics" />
-                  <span class="checkmark"></span>
-                  Politics
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="topics" value="technology" />
-                  <span class="checkmark"></span>
-                  Technology
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="topics" value="business" />
-                  <span class="checkmark"></span>
-                  Business
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="topics" value="health" />
-                  <span class="checkmark"></span>
-                  Health
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="topics" value="science" />
-                  <span class="checkmark"></span>
-                  Science
-                </label>
-                <label class="checkbox-label">
-                  <input type="checkbox" name="topics" value="entertainment" />
-                  <span class="checkmark"></span>
-                  Entertainment
-                </label>
-              </div>
-            </div>
-
-            <button type="submit" id="submit-btn" class="btn btn-primary btn-full">
-              <span class="btn-text">Sign Up for Early Access</span>
-              <span class="btn-loading" style="display: none;">
-                <div class="spinner"></div>
-                Signing up...
-              </span>
-            </button>
-          </form>
-
-          <div id="thank-you-message" class="thank-you-message" style="display: none;">
-            <div class="success-icon">✓</div>
-            <h3>Thank You!</h3>
-            <p>We've received your early access request. We'll be in touch soon with next steps.</p>
+            <div id="topics-error" class="error-message"></div>
           </div>
+
+          <button type="submit" id="submit-btn" class="btn btn-primary btn-rounded">
+            Join Early Access
+          </button>
+        </form>
+
+        <div id="thank-you-message" class="thank-you-message" style="display: none;">
+          <div class="success-icon">✓</div>
+          <h3>Thank you for joining!</h3>
+          <p>We'll notify you as soon as NewsLens is ready. Get ready to see news from every angle.</p>
         </div>
       </div>
     </div>
@@ -260,10 +190,8 @@
       </div>
       <div class="footer-bottom">
         <p>&copy; 2025 NewsLens. All rights reserved.</p>
-        <div class="social-links">
-          <a href="#" aria-label="Twitter">🐦</a>
-          <a href="#" aria-label="LinkedIn">💼</a>
-          <a href="#" aria-label="Facebook">📘</a>
+        <div class="footer-right">
+          <input type="text" class="footer-search" placeholder="Search" />
         </div>
       </div>
     </div>
